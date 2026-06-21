@@ -1,7 +1,10 @@
+import { BrowserRouter } from 'react-router'
+import AppRoutes from './AppRoutes'
+
 export default function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <p className="text-muted-foreground">Mixed</p>
-    </div>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   )
 }

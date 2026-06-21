@@ -28,6 +28,7 @@ npm-debug.log*
 *.tsbuildinfo
 
 # Vite / PWA
+frontend/.vite/
 frontend/public/sw.js
 frontend/public/workbox-*.js
 

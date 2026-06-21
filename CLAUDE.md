@@ -47,13 +47,22 @@ mixed/
     └── cd.yml
 ```
 
+## Routing
+
+`App.tsx` owns the `BrowserRouter`. Routes are defined in `AppRoutes.tsx` so tests can wrap them in `MemoryRouter` without nesting conflicts. Protected routes use `ProtectedRoute` (`src/components/ProtectedRoute.tsx`) which checks `useAuth()` and redirects to `/` if not signed in.
+
+```
+/           → Home (public)
+/profile    → Profile (protected)
+```
+
 ## Key Patterns
 
 **Logic separation** — business logic lives in `services/`, not route handlers. Routes own request/response shape only. Services receive user ID, never raw tokens.
 
 **AI usage** — Claude is called in exactly two places: cabinet ingredient parsing and recommendation generation. Always check Redis cache before calling the API. Cache parsing results by raw input string; cache recommendations by user ID with ~1 hour TTL.
 
-**Auth** — Clerk middleware verifies JWT and attaches user ID to request context on all protected routes.
+**Auth** — `clerkPlugin` from `@clerk/fastify` is scoped to a protected sub-app in `app.ts`; public routes like `/health` are registered outside it. On the frontend, use `Show` from `@clerk/react` (v6 replacement for `SignedIn`/`SignedOut`) with `ClerkProvider` using the shadcn theme from `@clerk/ui`. Services receive the user ID from `getAuth(request)`, never the raw token.
 
 **Error handling** — Fastify built-in error handler + custom plugin for consistent response shape. Zod validation errors → 400 with field-level detail.
 

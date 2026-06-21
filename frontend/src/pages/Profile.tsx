@@ -8,12 +8,18 @@ export default function Profile() {
   const [userId, setUserId] = useState<string | null>(null)
 
   async function fetchUser() {
-    const token = await getToken()
-    const res = await fetch('http://localhost:3000/api/user', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    const data = await res.json()
-    setUserId(data.userId)
+    try {
+      const token = await getToken()
+      if (!token) throw new Error('No token')
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) throw new Error(`${res.status}`)
+      const data = await res.json()
+      setUserId(data.userId)
+    } catch (err) {
+      console.error('Failed to fetch user:', err)
+    }
   }
 
   return (

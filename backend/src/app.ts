@@ -4,6 +4,12 @@ import { clerkPlugin } from '@clerk/fastify'
 import { healthRoutes } from './routes/health.js'
 import { userRoutes } from './routes/user.js'
 
+function requireEnv(key: string): string {
+  const value = process.env[key]
+  if (!value) throw new Error(`Missing required environment variable: ${key}`)
+  return value
+}
+
 export function buildApp() {
   const app = Fastify({ logger: true })
 
@@ -18,8 +24,8 @@ export function buildApp() {
   // Protected routes — Clerk required
   app.register(async (api) => {
     api.register(clerkPlugin, {
-      publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
-      secretKey: process.env.CLERK_SECRET_KEY,
+      publishableKey: requireEnv('CLERK_PUBLISHABLE_KEY'),
+      secretKey: requireEnv('CLERK_SECRET_KEY'),
     })
     api.register(userRoutes)
     // Register authenticated routes here as: api.register(cabinetRoutes) etc.

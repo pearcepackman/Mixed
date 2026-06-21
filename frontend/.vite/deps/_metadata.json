@@ -1,0 +1,32 @@
+{
+  "hash": "14d4a362",
+  "configHash": "4ff083bd",
+  "lockfileHash": "c8e6e69f",
+  "browserHash": "f38592b0",
+  "optimized": {
+    "react-dom/client": {
+      "src": "../../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "40c1d125",
+      "needsInterop": true
+    },
+    "react": {
+      "src": "../../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "8ede1dee",
+      "needsInterop": true
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "ac7e9fa1",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "react-Bp_NiCtn": {
+      "file": "react-Bp_NiCtn.js",
+      "isDynamicEntry": false
+    }
+  }
+}

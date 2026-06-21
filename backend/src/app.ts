@@ -3,6 +3,7 @@ import cors from '@fastify/cors'
 import { clerkPlugin } from '@clerk/fastify'
 import { healthRoutes } from './routes/health.js'
 import { userRoutes } from './routes/user.js'
+import { cocktailRoutes } from './routes/cocktails.js'
 
 function requireEnv(key: string): string {
   const value = process.env[key]
@@ -28,6 +29,7 @@ export function buildApp() {
       secretKey: requireEnv('CLERK_SECRET_KEY'),
     })
     api.register(userRoutes)
+    api.register(cocktailRoutes)
     // Register authenticated routes here as: api.register(cabinetRoutes) etc.
   })
 

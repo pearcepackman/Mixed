@@ -1,0 +1,15 @@
+{
+  "name": "mixed",
+  "private": true,
+  "workspaces": ["frontend", "backend"],
+  "scripts": {
+    "start": "concurrently -n frontend,backend -c cyan,green \"npm run dev -w frontend\" \"npm run dev -w backend\"",
+    "frontend": "npm run dev -w frontend",
+    "backend": "npm run dev -w backend",
+    "test": "concurrently -n frontend,backend -c cyan,green \"npm test -w frontend\" \"npm test -w backend\"",
+    "build": "npm run build -w frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

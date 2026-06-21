@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.output/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# TypeScript
+*.tsbuildinfo
+
+# Vite / PWA
+frontend/public/sw.js
+frontend/public/workbox-*.js
+
+# Prisma
+backend/prisma/migrations/dev.db
+
+# AWS / CDK
+cdk.out/
+.aws-sam/

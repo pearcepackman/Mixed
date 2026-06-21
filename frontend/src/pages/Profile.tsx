@@ -44,6 +44,13 @@ export default function Profile() {
       )}
 
       <button
+        onClick={() => navigate('/cocktails')}
+        className="rounded-md border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+      >
+        Browse cocktails
+      </button>
+
+      <button
         onClick={() => navigate('/')}
         className="text-sm text-muted-foreground underline-offset-4 hover:underline"
       >

@@ -4,5 +4,74 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  createdAt DateTime @default(now())
+
+  cabinet   UserIngredient[]
+  drinkLogs DrinkLog[]
+}
+
+model Ingredient {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  userCabinets        UserIngredient[]
+  cocktailIngredients CocktailIngredient[]
+}
+
+model UserIngredient {
+  id           Int      @id @default(autoincrement())
+  userId       String
+  ingredientId Int
+  createdAt    DateTime @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@unique([userId, ingredientId])
+}
+
+model Cocktail {
+  id           Int      @id // TheCocktailDB numeric ID
+  name         String
+  category     String?
+  alcoholic    Boolean  @default(true)
+  glass        String?
+  instructions String
+  imageUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  ingredients CocktailIngredient[]
+  drinkLogs   DrinkLog[]
+}
+
+model CocktailIngredient {
+  id           Int     @id @default(autoincrement())
+  cocktailId   Int
+  ingredientId Int
+  measure      String?
+  isOptional   Boolean @default(false)
+
+  cocktail   Cocktail   @relation(fields: [cocktailId], references: [id])
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@unique([cocktailId, ingredientId])
+}
+
+model DrinkLog {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  cocktailId Int
+  rating     Int? // 1–5
+  notes      String?
+  loggedAt   DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cocktail Cocktail @relation(fields: [cocktailId], references: [id])
 }

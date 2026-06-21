@@ -1,7 +1,7 @@
 import { config } from 'dotenv'
 config()
 
-import { buildApp } from './app.js'
+const { buildApp } = await import('./app.js')
 
 const app = buildApp()
 

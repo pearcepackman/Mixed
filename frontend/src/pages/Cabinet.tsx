@@ -3,7 +3,8 @@ import { useAuth } from '@clerk/react'
 import { X } from 'lucide-react'
 
 function ingredientImageUrl(name: string) {
-  return `https://www.thecocktaildb.com/images/ingredients/${encodeURIComponent(name)}-Small.png`
+  const capitalized = name.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+  return `https://www.thecocktaildb.com/images/ingredients/${encodeURIComponent(capitalized)}-Small.png`
 }
 
 function IngredientCard({ name, onRemove }: { name: string; onRemove: () => void }) {

@@ -39,7 +39,7 @@ export async function cabinetRoutes(app: FastifyInstance) {
 
     const { id } = request.params as { id: string }
     const numId = parseInt(id, 10)
-    if (isNaN(numId)) return reply.status(400).send({ error: 'Invalid id' })
+    if (isNaN(numId) || numId <= 0) return reply.status(400).send({ error: 'Invalid id' })
 
     const userId = await ensureUser(clerkId)
     const deleted = await removeIngredient(userId, numId)

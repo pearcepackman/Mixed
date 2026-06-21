@@ -19,7 +19,7 @@ export async function parseIngredients(rawInput: string): Promise<string[]> {
   if (cached) return cached
 
   const message = await getClaude().messages.create({
-    model: 'claude-haiku-4-5',
+    model: 'claude-haiku-4-5-20251001',
     max_tokens: 256,
     messages: [
       {
@@ -29,7 +29,8 @@ export async function parseIngredients(rawInput: string): Promise<string[]> {
     ],
   })
 
-  const raw = message.content[0].type === 'text' ? message.content[0].text.trim() : '[]'
+  const textBlock = message.content.find((block) => block.type === 'text')
+  const raw = textBlock && textBlock.type === 'text' ? textBlock.text.trim() : '[]'
   const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
 
   let ingredients: string[] = []
@@ -85,11 +86,8 @@ export async function getCabinet(userId: string) {
 }
 
 export async function removeIngredient(userId: string, userIngredientId: number) {
-  const entry = await getPrisma().userIngredient.findFirst({
+  const { count } = await getPrisma().userIngredient.deleteMany({
     where: { id: userIngredientId, userId },
   })
-  if (!entry) return false
-
-  await getPrisma().userIngredient.delete({ where: { id: userIngredientId } })
-  return true
+  return count > 0
 }

@@ -6,6 +6,7 @@ import Profile from './pages/Profile'
 import Cocktails from './pages/Cocktails'
 import Cabinet from './pages/Cabinet'
 import Discover from './pages/Discover'
+import Log from './pages/Log'
 
 const NAV_ROUTES = ['/cabinet', '/discover', '/log', '/profile']
 
@@ -46,6 +47,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <Discover />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/log"
+          element={
+            <ProtectedRoute>
+              <Log />
             </ProtectedRoute>
           }
         />

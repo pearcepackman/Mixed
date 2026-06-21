@@ -74,4 +74,6 @@ model DrinkLog {
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   cocktail Cocktail @relation(fields: [cocktailId], references: [id])
+
+  @@index([userId, loggedAt])
 }

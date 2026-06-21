@@ -68,15 +68,24 @@ npm install
 Create `backend/.env`:
 ```
 DATABASE_URL=your_neon_connection_string
-CLERK_SECRET_KEY=your_clerk_secret
-ANTHROPIC_API_KEY=your_anthropic_key
-UPSTASH_REDIS_URL=your_upstash_url
-UPSTASH_REDIS_TOKEN=your_upstash_token
+CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+ANTHROPIC_API_KEY=sk-ant-...
+UPSTASH_REDIS_REST_URL=https://...
+UPSTASH_REDIS_REST_TOKEN=...
+FRONTEND_URL=http://localhost:5173
+```
+
+Create `frontend/.env`:
+```
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
+VITE_API_URL=http://localhost:3000
 ```
 
 ```bash
-npm run db:migrate -w backend   # run Prisma migrations
-npm start                        # starts frontend (5173) and backend (3000)
+npm run db:generate -w backend  # generate Prisma client (required after fresh clone)
+npm run db:migrate -w backend   # apply migrations
+npm start                        # starts frontend (:5173) and backend (:3000) concurrently
 ```
 
 ## Architecture Notes

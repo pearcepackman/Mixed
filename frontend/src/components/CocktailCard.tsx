@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, X, FlaskConical } from 'lucide-react'
+import { Check, X, FlaskConical, BookOpen } from 'lucide-react'
 
 export interface CocktailCardIngredient {
   name: string
@@ -18,9 +18,11 @@ export interface CocktailCardProps {
   ingredients?: CocktailCardIngredient[]
   ownedIngredients?: number
   totalIngredients?: number
+  onLog?: (cocktail: { cocktailId: number; name: string; imageUrl: string | null }) => void
 }
 
 export default function CocktailCard({
+  cocktailId,
   name,
   imageUrl,
   category,
@@ -30,6 +32,7 @@ export default function CocktailCard({
   ingredients = [],
   ownedIngredients,
   totalIngredients,
+  onLog,
 }: CocktailCardProps) {
   const [flipped, setFlipped] = useState(false)
 
@@ -112,6 +115,19 @@ export default function CocktailCard({
 
           {instructions && (
             <p className="text-xs text-muted-foreground leading-relaxed">{instructions}</p>
+          )}
+
+          {onLog && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onLog({ cocktailId, name, imageUrl })
+              }}
+              className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-border py-2 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:border-primary/50 hover:text-primary min-h-[36px]"
+            >
+              <BookOpen size={13} />
+              Log this drink
+            </button>
           )}
         </div>
       </div>

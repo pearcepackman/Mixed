@@ -5,6 +5,7 @@ import { healthRoutes } from './routes/health.js'
 import { userRoutes } from './routes/user.js'
 import { cocktailRoutes } from './routes/cocktails.js'
 import { cabinetRoutes } from './routes/cabinet.js'
+import { logsRoutes } from './routes/logs.js'
 
 function requireEnv(key: string): string {
   const value = process.env[key]
@@ -41,6 +42,7 @@ export function buildApp() {
     api.register(userRoutes)
     api.register(cocktailRoutes)
     api.register(cabinetRoutes)
+    api.register(logsRoutes)
   })
 
   return app

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+  </style>
+</helmet>
+
+<div style="--accent:{{ accent }}; min-width:100%; min-height:100vh; width:max-content; box-sizing:border-box; padding:48px; background:#e7e5df; font-family:'Inter',sans-serif;">
+  <div style="display:flex; gap:44px; align-items:flex-start;">
+
+    <!-- ===================== FRAME 1: FILLED ===================== -->
+    <div style="flex:none; display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.04em; color:#6b6760; text-transform:uppercase;">Cabinet — with ingredients</div>
+
+      <div style="flex:none; width:390px; height:844px; background:#17120d; border:1px solid #2b231b; border-radius:30px; box-shadow:0 18px 50px rgba(0,0,0,0.28); overflow:hidden; display:flex; flex-direction:column; position:relative;">
+
+        <!-- status bar -->
+        <div style="flex:none; height:50px; padding:0 26px; display:flex; align-items:center; justify-content:space-between; color:#efe7dc;">
+          <div style="font-size:14px; font-weight:600; letter-spacing:0.02em;">9:41</div>
+          <div style="display:flex; align-items:center; gap:7px;">
+            <div style="display:flex; align-items:flex-end; gap:2px; height:11px;">
+              <span style="width:3px; height:5px; background:#efe7dc; border-radius:1px;"></span>
+              <span style="width:3px; height:7px; background:#efe7dc; border-radius:1px;"></span>
+              <span style="width:3px; height:9px; background:#efe7dc; border-radius:1px;"></span>
+              <span style="width:3px; height:11px; background:#efe7dc; border-radius:1px;"></span>
+            </div>
+            <div style="display:flex; align-items:center; gap:2px;">
+              <div style="width:20px; height:11px; border:1px solid #efe7dc; border-radius:3px; padding:1.5px; display:flex;"><div style="flex:1; background:#efe7dc; border-radius:1px;"></div></div>
+              <div style="width:1.5px; height:4px; background:#efe7dc; border-radius:1px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- header -->
+        <div style="flex:none; padding:8px 16px 12px;">
+          <div style="font-size:24px; font-weight:600; color:#efe7dc; letter-spacing:-0.01em;">My Cabinet</div>
+        </div>
+
+        <!-- content -->
+        <div style="flex:1; min-height:0; padding:0 16px 16px; overflow:hidden; display:flex; flex-direction:column; gap:18px;">
+
+          <!-- input area -->
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="border:1.4px dashed #3a2f24; border-radius:10px; background:#1d1710; padding:11px 12px; min-height:74px;">
+              <div style="font-size:13px; color:#7d7468; line-height:1.5;">What do you have? e.g. vodka, lime juice, triple sec, some rum…</div>
+            </div>
+            <div style="display:flex; justify-content:flex-end;">
+              <button style="border:none; background:var(--accent,#c9a87c); color:#17120d; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; border-radius:10px; padding:9px 18px; min-height:40px; cursor:pointer;">Add to cabinet</button>
+            </div>
+          </div>
+
+          <!-- grid -->
+          <div style="display:flex; flex-direction:column; gap:10px; min-height:0; overflow:hidden;">
+            <div style="font-size:12px; font-weight:500; color:#8c8276;">12 ingredients</div>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
+              <sc-for list="{{ ingredients }}" as="ing" hint-placeholder-count="9">
+                <div style="position:relative; border:1px solid #2c241b; background:#221b14; border-radius:12px; padding:12px 8px 10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                  <div style="position:absolute; top:5px; right:5px; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#6b6256;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                  </div>
+                  <div style="width:52px; height:52px; border-radius:50%; border:1.3px dashed #4a3d2f; background:#1d1710; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:8px; color:#5c5347;">img</div>
+                  <div style="font-size:11px; font-weight:500; color:#d8cfc2; text-align:center; line-height:1.25;">{{ ing.name }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- bottom nav -->
+        <div style="flex:none; border-top:1px solid #271f17; background:#1a140e; padding:9px 8px 0;">
+          <div style="display:flex; align-items:stretch; justify-content:space-around;">
+            <div style="flex:1; min-height:44px; display:flex; flex-direction:column; align-items:center; gap:4px; padding:4px 0;">
+              <div style="width:46px; height:26px; border-radius:9px; background:color-mix(in srgb, var(--accent,#c9a87c) 18%, transparent); display:flex; align-items:center; justify-content:center; color:var(--accent,#c9a87c);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-5.2 9.1A1.6 1.6 0 0 0 6.2 20.5h11.6a1.6 1.6 0 0 0 1.4-2.4L14 9V3"/><path d="M7 14h10"/></svg></div>
+              <span style="font-size:11px; font-weight:500; color:var(--accent,#c9a87c);">Cabinet</span>
+            </div>
+            <div style="flex:1; min-height:44px; display:flex; flex-direction:column; align-items:center; gap:4px; padding:4px 0;">
+              <div style="width:46px; height:26px; display:flex; align-items:center; justify-content:center; color:#7d7468;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.6 8.4l-2 5.2-5.2 2 2-5.2z"/></svg></div>
+              <span style="font-size:11px; font-weight:500; color:#8c8276;">Discover</span>
+            </div>
+            <div style="flex:1; min-height:44px; display:flex; flex-direction:column; align-items:center; gap:4px; padding:4px 0;">
+              <div style="width:46px; height:26px; display:flex; align-items:center; justify-content:center; color:#7d7468;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.6C10.4 5.6 7.8 5.1 4.4 5.4V18.4C7.8 18.1 10.4 18.6 12 19.6M12 6.6C13.6 5.6 16.2 5.1 19.6 5.4V18.4C16.2 18.1 13.6 18.6 12 19.6M12 6.6V19.6"/></svg></div>
+              <span style="font-size:11px; font-weight:500; color:#8c8276;">Log</span>
+            </div>
+            <div style="flex:1; min-height:44px; display:flex; flex-direction:column; align-items:center; gap:4px; padding:4px 0;">
+              <div style="width:46px; height:26px; display:flex; align-items:center; justify-content:center; color:#7d7468;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/></svg></div>
+              <span style="font-size:11px; font-weight:500; color:#8c8276;">Profile</span>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:center; padding:8px 0;"><div style="width:134px; height:5px; border-radius:3px; background:#3a2f24;"></div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===================== FRAME 2: EMPTY ===================== -->
+    <div style="flex:none; display:flex; flex-direction:column; gap:14px;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.04em; color:#6b6760; text-transform:uppercase;">Cabinet — empty state</div>
+
+      <div style="flex:none; width:390px; height:844px; background:#17120d; border:1px solid #2b231b; border-radius:30px; box-shadow:0 18px 50px rgba(0,0,0,0.28); overflow:hidden; display:flex; flex-direction:column; position:relative;">
+
+        <!-- status bar -->
+        <div style="flex:none; height:50px; padding:0 26px; display:flex; align-items:center; justify-content:space-between; color:#efe7dc;">
+          <div style="font-size:14px; font-weight:600; letter-spacing:0.02em;">9:41</div>
+          <div style="display:flex; align-items:center; gap:7px;">
+            <div style="display:flex; align-items:flex-end; gap:2px; height:11px;">
+              <span style="width:3px; height:5px; background:#efe7dc; border-radius:1px;"></span>
+              <span style="width:3px; height:7px; background:#efe7dc; border-radius:1px;"></span>
+              <span style="width:3px; height:9px; background:#efe7dc; border-radius:1px;"></span>
+              <span style="width:3px; height:11px; background:#efe7dc; border-radius:1px;"></span>
+            </div>
+            <div style="display:flex; align-items:center; gap:2px;">
+              <div style="width:20px; height:11px; border:1px solid #efe7dc; border-radius:3px; padding:1.5px; display:flex;"><div style="flex:1; background:#efe7dc; border-radius:1px;"></div></div>
+              <div style="width:1.5px; height:4px; background:#efe7dc; border-radius:1px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- header -->
+        <div style="flex:none; padding:8px 16px 12px;">
+          <div style="font-size:24px; font-weight:600; color:#efe7dc; letter-spacing:-0.01em;">My Cabinet</div>
+        </div>
+
+        <!-- content -->
+        <div style="flex:1; min-height:0; padding:0 16px 16px; overflow:hidden; display:flex; flex-direction:column; gap:18px;">
+
+          <!-- input area -->
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="border:1.4px dashed #3a2f24; border-radius:10px; background:#1d1710; padding:11px 12px; min-height:74px;">
+              <div style="font-size:13px; color:#7d7468; line-height:1.5;">What do you have? e.g. vodka, lime juice, triple sec, some rum…</div>
+            </div>
+            <div style="display:flex; justify-content:flex-end;">
+              <button style="border:none; background:var(--accent,#c9a87c); color:#17120d; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; border-radius:10px; padding:9px 18px; min-height:40px; cursor:pointer;">Add to cabinet</button>
+            </div>
+          </div>
+
+          <!-- empty state -->
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:14px; padding:20px 24px 40px;">
+            <div style="width:64px; height:64px; border-radius:50%; border:1.6px dashed #4a3d2f; background:#1d1710; display:flex; align-items:center; justify-content:center; color:var(--accent,#c9a87c);">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-5.2 9.1A1.6 1.6 0 0 0 6.2 20.5h11.6a1.6 1.6 0 0 0 1.4-2.4L14 9V3"/><path d="M7 14h10"/></svg>
+            </div>
+            <div style="font-size:16px; font-weight:500; color:#e3dacd;">Your cabinet's looking thirsty</div>
+            <div style="font-size:13px; font-weight:400; color:#8c8276; line-height:1.55; max-width:250px;">Tell us what you've got on the shelf and we'll show you what you can pour.</div>
+            <div style="font-family:'Architects Daughter',cursive; font-size:15px; color:#6b6256; margin-top:6px;">↑ type a few bottles up there</div>
+          </div>
+
+        </div>
+
+        <!-- bottom nav -->
+        <div style="flex:none; border-top:1px solid #271f17; background:#1a140e; padding:9px 8px 0;">
+          <div style="display:flex; align-items:stretch; justify-content:space-around;">
+            <div style="flex:1; min-height:44px; display:flex; flex-direction:column; align-items:center; gap:4px; padding:4px 0;">
+              <div style="width:46px; height:26px; border-radius:9px; background:color-mix(in srgb, var(--accent,#c9a87c) 18%, transparent); display:flex; align-items:center; justify-content:center; color:var(--accent,#c9a87c);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6l-5.2 9.1A1.6 1.6 0 0 0 6.2 20.5h11.6a1.6 1.6 0 0 0 1.4-2.4L14 9V3"/><path d="M7 14h10"/></svg></div>
+              <span style="font-size:11px; font-weight:500; color:var(--accent,#c9a87c);">Cabinet</span>
+            </div>
+            <div style="flex:1; min-height:44px; display:flex; flex-direction:column; align-items:center; gap:4px; padding:4px 0;">
+              <div style="width:46px; height:26px; display:flex; align-items:center; justify-content:center; color:#7d7468;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.6 8.4l-2 5.2-5.2 2 2-5.2z"/></svg></div>
+              <span style="font-size:11px; font-weight:500; color:#8c8276;">Discover</span>
+            </div>
+            <div style="flex:1; min-height:44px; display:flex; flex-direction:column; align-items:center; gap:4px; padding:4px 0;">
+              <div style="width:46px; height:26px; display:flex; align-items:center; justify-content:center; color:#7d7468;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.6C10.4 5.6 7.8 5.1 4.4 5.4V18.4C7.8 18.1 10.4 18.6 12 19.6M12 6.6C13.6 5.6 16.2 5.1 19.6 5.4V18.4C16.2 18.1 13.6 18.6 12 19.6M12 6.6V19.6"/></svg></div>
+              <span style="font-size:11px; font-weight:500; color:#8c8276;">Log</span>
+            </div>
+            <div style="flex:1; min-height:44px; display:flex; flex-direction:column; align-items:center; gap:4px; padding:4px 0;">
+              <div style="width:46px; height:26px; display:flex; align-items:center; justify-content:center; color:#7d7468;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/></svg></div>
+              <span style="font-size:11px; font-weight:500; color:#8c8276;">Profile</span>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:center; padding:8px 0;"><div style="width:134px; height:5px; border-radius:3px; background:#3a2f24;"></div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===================== NOTES ===================== -->
+    <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:none; width:290px; padding-top:34px; display:flex; flex-direction:column; gap:22px;">
+        <div style="font-family:'Architects Daughter',cursive; font-size:26px; color:#3f3a33;">cabinet</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.55; color:#5c574f;">Where you tell Mixed what you own. Two states — full shelf and the first-run empty state.</div>
+
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; gap:10px;">
+            <div style="font-family:'Architects Daughter',cursive; font-size:18px; color:var(--accent,#b5825c); flex:none; width:18px;">1</div>
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:#3f3a33; font-weight:500;">Freeform add</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; line-height:1.5; color:#6b6760; margin-top:3px;">Type bottles in plain language → parsed into the grid.</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div style="font-family:'Architects Daughter',cursive; font-size:18px; color:var(--accent,#b5825c); flex:none; width:18px;">2</div>
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:#3f3a33; font-weight:500;">3-col image grid</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; line-height:1.5; color:#6b6760; margin-top:3px;">Bottle photo · name · tap × to remove. (your image-card lean)</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div style="font-family:'Architects Daughter',cursive; font-size:18px; color:var(--accent,#b5825c); flex:none; width:18px;">3</div>
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:#3f3a33; font-weight:500;">Empty state</div>
+              <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; line-height:1.5; color:#6b6760; margin-top:3px;">Icon · warm headline · nudge back up to the input.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top:1px dashed #b9b5ac; padding-top:16px;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; line-height:1.5; color:#6b6760;">Accent: <b style="color:var(--accent,#b5825c);">{{ accentName }}</b> — still tweakable.</div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:960},&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Tan&quot;,&quot;Emerald&quot;,&quot;Brown&quot;],&quot;default&quot;:&quot;Tan&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const map = { Tan: '#c9a87c', Emerald: '#4ea884', Brown: '#b5825c' };
+    const accentName = this.props.accent ?? 'Tan';
+    return {
+      accent: map[accentName] || map.Tan,
+      accentName,
+      showNotes: this.props.showNotes ?? true,
+      ingredients: [
+        { name: 'Vodka' }, { name: 'Gin' }, { name: 'White Rum' },
+        { name: 'Lime Juice' }, { name: 'Triple Sec' }, { name: 'Simple Syrup' },
+        { name: 'Campari' }, { name: 'Sweet Vermouth' }, { name: 'Angostura' },
+        { name: 'Tonic Water' }, { name: 'Fresh Mint' }, { name: 'Lemon' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

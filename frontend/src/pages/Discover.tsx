@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useAuth } from '@clerk/react'
+import { useNavigate } from 'react-router'
 import { Search, X } from 'lucide-react'
 import CocktailCard from '../components/CocktailCard'
 
@@ -19,6 +20,7 @@ interface CanMakeResult {
 
 export default function Discover() {
   const { getToken } = useAuth()
+  const navigate = useNavigate()
   const [canMake, setCanMake] = useState<CanMakeResult[]>([])
   const [searchResults, setSearchResults] = useState<CanMakeResult[]>([])
   const [query, setQuery] = useState('')
@@ -84,6 +86,10 @@ export default function Discover() {
   const displayed = isSearching ? searchResults : tabResults
   const loading = isSearching ? loadingSearch : loadingCanMake
 
+  function handleLog(cocktail: { cocktailId: number; name: string; imageUrl: string | null }) {
+    navigate('/log', { state: { cocktail } })
+  }
+
   function renderCards(list: CanMakeResult[]) {
     return (
       <div className="flex flex-col gap-4">
@@ -100,6 +106,7 @@ export default function Discover() {
             ingredients={c.ingredients}
             ownedIngredients={c.ownedIngredients}
             totalIngredients={c.totalIngredients}
+            onLog={handleLog}
           />
         ))}
       </div>

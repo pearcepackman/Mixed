@@ -31,4 +31,24 @@ describe('App routing', () => {
     expect(screen.getByText('Mixed')).toBeInTheDocument()
     expect(screen.queryByText('Profile')).not.toBeInTheDocument()
   })
+
+  it('redirects /cabinet to / when signed out', () => {
+    renderAt('/cabinet')
+    expect(screen.getByText('Mixed')).toBeInTheDocument()
+  })
+
+  it('redirects /discover to / when signed out', () => {
+    renderAt('/discover')
+    expect(screen.getByText('Mixed')).toBeInTheDocument()
+  })
+
+  it('redirects /log to / when signed out', () => {
+    renderAt('/log')
+    expect(screen.getByText('Mixed')).toBeInTheDocument()
+  })
+
+  it('does not show bottom nav on the home page', () => {
+    renderAt('/')
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument()
+  })
 })

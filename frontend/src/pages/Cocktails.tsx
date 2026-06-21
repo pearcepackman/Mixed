@@ -26,6 +26,7 @@ export default function Cocktails() {
     setError(null)
     try {
       const token = await getToken()
+      if (!token) throw new Error('No active session')
       const params = search.trim() ? `?search=${encodeURIComponent(search.trim())}` : ''
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cocktails${params}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -34,7 +35,7 @@ export default function Cocktails() {
       const data = await res.json()
       setResults(data.cocktails)
       setSearched(true)
-    } catch (err) {
+    } catch {
       setError('Failed to fetch cocktails.')
     } finally {
       setLoading(false)

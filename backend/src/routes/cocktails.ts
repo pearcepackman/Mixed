@@ -3,11 +3,12 @@ import { prisma } from '../lib/prisma.js'
 
 export async function cocktailRoutes(app: FastifyInstance) {
   app.get('/api/cocktails', async (request, reply) => {
-    const { search } = request.query as { search?: string }
+    const { search } = request.query as { search?: unknown }
+    const searchString = typeof search === 'string' ? search.trim() : undefined
 
     const cocktails = await prisma.cocktail.findMany({
-      where: search
-        ? { name: { contains: search, mode: 'insensitive' } }
+      where: searchString
+        ? { name: { contains: searchString, mode: 'insensitive' } }
         : undefined,
       select: {
         id: true,

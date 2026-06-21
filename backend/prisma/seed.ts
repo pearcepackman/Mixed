@@ -51,6 +51,7 @@ async function fetchByLetter(letter: string): Promise<CocktailDBDrink[]> {
   const res = await fetch(
     `https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${letter}`,
   )
+  if (!res.ok) throw new Error(`Failed to fetch cocktails for letter ${letter}: ${res.status}`)
   const data = (await res.json()) as { drinks: CocktailDBDrink[] | null }
   return data.drinks ?? []
 }
@@ -91,15 +92,12 @@ async function main() {
     }
   }
 
-  // Upsert all ingredients
+  // Bulk insert all ingredients, skip duplicates for re-runs
   console.log(`Upserting ${ingredientNames.size} ingredients...`)
-  for (const name of ingredientNames) {
-    await prisma.ingredient.upsert({
-      where: { name },
-      update: {},
-      create: { name },
-    })
-  }
+  await prisma.ingredient.createMany({
+    data: Array.from(ingredientNames).map((name) => ({ name })),
+    skipDuplicates: true,
+  })
 
   // Build ingredient name → id map
   const ingredients = await prisma.ingredient.findMany()

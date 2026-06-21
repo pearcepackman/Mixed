@@ -53,7 +53,9 @@ mixed/
 
 ```
 /           → Home (public)
+/cabinet    → Cabinet management (protected)
 /profile    → Profile (protected)
+/cocktails  → Cocktail search/browse (protected)
 ```
 
 ## Key Patterns
@@ -66,7 +68,7 @@ mixed/
 
 **Error handling** — Fastify built-in error handler + custom plugin for consistent response shape. Zod validation errors → 400 with field-level detail.
 
-**Environment variables** — never commit secrets. Required: `DATABASE_URL`, `CLERK_SECRET_KEY`, `ANTHROPIC_API_KEY`, `UPSTASH_REDIS_URL`, `UPSTASH_REDIS_TOKEN`, `FRONTEND_URL` (CORS origin, defaults to `http://localhost:5173`).
+**Environment variables** — never commit secrets. Required: `DATABASE_URL`, `CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY`, `ANTHROPIC_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `FRONTEND_URL` (CORS origin, defaults to `http://localhost:5173`).
 
 ## V1 Scope
 

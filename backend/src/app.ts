@@ -1,5 +1,5 @@
 import Fastify from 'fastify'
-import { healthRoutes } from './routes/health.ts'
+import { healthRoutes } from './routes/health.js'
 
 export function buildApp() {
   const app = Fastify({ logger: true })

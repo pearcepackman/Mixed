@@ -1,4 +1,4 @@
-import { buildApp } from './app.ts'
+import { buildApp } from './app.js'
 
 const app = buildApp()
 

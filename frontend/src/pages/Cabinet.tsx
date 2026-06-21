@@ -144,6 +144,7 @@ export default function Cabinet() {
           ))}
         </div>
       )}
+
     </div>
   )
 }

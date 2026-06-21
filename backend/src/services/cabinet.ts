@@ -85,9 +85,160 @@ export async function getCabinet(userId: string) {
   }))
 }
 
+export async function searchCocktails(userId: string, query: string): Promise<CanMakeResult[]> {
+  const db = getPrisma()
+
+  const ownedIds = await db.userIngredient.findMany({
+    where: { userId },
+    select: { ingredientId: true },
+  })
+
+  const owned = new Set(ownedIds.map((r) => r.ingredientId))
+
+  const cocktails = await db.cocktail.findMany({
+    where: { name: { contains: query, mode: 'insensitive' } },
+    select: {
+      id: true,
+      name: true,
+      imageUrl: true,
+      category: true,
+      glass: true,
+      alcoholic: true,
+      instructions: true,
+      ingredients: {
+        where: { isOptional: false },
+        select: {
+          measure: true,
+          ingredientId: true,
+          ingredient: { select: { name: true } },
+        },
+      },
+    },
+    orderBy: { name: 'asc' },
+    take: 30,
+  })
+
+  return cocktails.map((cocktail) => {
+    const total = cocktail.ingredients.length
+    const missing = cocktail.ingredients
+      .filter((ci) => !owned.has(ci.ingredientId))
+      .map((ci) => ci.ingredient.name)
+
+    return {
+      cocktailId: cocktail.id,
+      name: cocktail.name,
+      imageUrl: cocktail.imageUrl,
+      category: cocktail.category,
+      glass: cocktail.glass,
+      alcoholic: cocktail.alcoholic,
+      instructions: cocktail.instructions,
+      totalIngredients: total,
+      ownedIngredients: total - missing.length,
+      missingIngredients: missing,
+      ingredients: cocktail.ingredients.map((ci) => ({
+        name: ci.ingredient.name,
+        measure: ci.measure,
+        owned: owned.has(ci.ingredientId),
+      })),
+    }
+  })
+}
+
 export async function removeIngredient(userId: string, userIngredientId: number) {
   const { count } = await getPrisma().userIngredient.deleteMany({
     where: { id: userIngredientId, userId },
   })
   return count > 0
+}
+
+export interface CanMakeIngredient {
+  name: string
+  measure: string | null
+  owned: boolean
+}
+
+export interface CanMakeResult {
+  cocktailId: number
+  name: string
+  imageUrl: string | null
+  category: string | null
+  glass: string | null
+  alcoholic: boolean
+  instructions: string
+  totalIngredients: number
+  ownedIngredients: number
+  missingIngredients: string[]
+  ingredients: CanMakeIngredient[]
+}
+
+export async function getCanMake(userId: string): Promise<CanMakeResult[]> {
+  const db = getPrisma()
+
+  const ownedIds = await db.userIngredient.findMany({
+    where: { userId },
+    select: { ingredientId: true },
+  })
+
+  if (ownedIds.length === 0) return []
+
+  const owned = new Set(ownedIds.map((r) => r.ingredientId))
+
+  const cocktails = await db.cocktail.findMany({
+    select: {
+      id: true,
+      name: true,
+      imageUrl: true,
+      category: true,
+      glass: true,
+      alcoholic: true,
+      instructions: true,
+      ingredients: {
+        where: { isOptional: false },
+        select: {
+          measure: true,
+          ingredientId: true,
+          ingredient: { select: { name: true } },
+        },
+      },
+    },
+  })
+
+  const results: CanMakeResult[] = []
+
+  for (const cocktail of cocktails) {
+    const total = cocktail.ingredients.length
+    if (total === 0) continue
+
+    const missing = cocktail.ingredients
+      .filter((ci) => !owned.has(ci.ingredientId))
+      .map((ci) => ci.ingredient.name)
+
+    const ownedCount = total - missing.length
+    if (ownedCount === 0) continue
+
+    results.push({
+      cocktailId: cocktail.id,
+      name: cocktail.name,
+      imageUrl: cocktail.imageUrl,
+      category: cocktail.category,
+      glass: cocktail.glass,
+      alcoholic: cocktail.alcoholic,
+      instructions: cocktail.instructions,
+      totalIngredients: total,
+      ownedIngredients: ownedCount,
+      missingIngredients: missing,
+      ingredients: cocktail.ingredients.map((ci) => ({
+        name: ci.ingredient.name,
+        measure: ci.measure,
+        owned: owned.has(ci.ingredientId),
+      })),
+    })
+  }
+
+  return results.sort((a, b) => {
+    const aRatio = a.ownedIngredients / a.totalIngredients
+    const bRatio = b.ownedIngredients / b.totalIngredients
+    if (bRatio !== aRatio) return bRatio - aRatio
+    return a.missingIngredients.length - b.missingIngredients.length
+  })
 }

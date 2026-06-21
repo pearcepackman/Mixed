@@ -13,7 +13,15 @@ function requireEnv(key: string): string {
 }
 
 export function buildApp() {
-  const app = Fastify({ logger: true })
+  const app = Fastify({
+    logger: {
+      transport: {
+        target: 'pino-pretty',
+        options: { colorize: true, ignore: 'pid,hostname,reqId,req,res,responseTime' },
+      },
+      level: 'warn',
+    },
+  })
 
   app.register(cors, {
     origin: process.env.FRONTEND_URL ?? 'http://localhost:5173',

@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { getAuth } from '@clerk/fastify'
 import { z } from 'zod'
-import { ensureUser, parseIngredients, addIngredients, getCabinet, removeIngredient } from '../services/cabinet.js'
+import { ensureUser, parseIngredients, addIngredients, getCabinet, removeIngredient, getCanMake, searchCocktails } from '../services/cabinet.js'
 
 const addSchema = z.object({ input: z.string().min(1) })
 
@@ -31,6 +31,27 @@ export async function cabinetRoutes(app: FastifyInstance) {
 
     const cabinet = await addIngredients(userId, names)
     return { cabinet }
+  })
+
+  app.get('/api/cocktails/search', async (request, reply) => {
+    const { userId: clerkId } = getAuth(request)
+    if (!clerkId) return reply.status(401).send({ error: 'Unauthorized' })
+
+    const { q } = request.query as { q?: unknown }
+    if (typeof q !== 'string' || !q.trim()) return reply.status(400).send({ error: 'q is required' })
+
+    const userId = await ensureUser(clerkId)
+    const cocktails = await searchCocktails(userId, q.trim())
+    return { cocktails }
+  })
+
+  app.get('/api/cabinet/can-make', async (request, reply) => {
+    const { userId: clerkId } = getAuth(request)
+    if (!clerkId) return reply.status(401).send({ error: 'Unauthorized' })
+
+    const userId = await ensureUser(clerkId)
+    const cocktails = await getCanMake(userId)
+    return { cocktails }
   })
 
   app.delete('/api/cabinet/:id', async (request, reply) => {

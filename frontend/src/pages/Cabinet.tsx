@@ -41,7 +41,7 @@ function GridSkeleton() {
   return (
     <div className="grid grid-cols-3 gap-3">
       {Array.from({ length: 9 }).map((_, i) => (
-        <div key={i} className="h-[110px] animate-pulse rounded-xl bg-muted" />
+        <div key={i} className="h-28 animate-pulse rounded-xl bg-muted" />
       ))}
     </div>
   )
@@ -124,14 +124,16 @@ export default function Cabinet() {
   }
 
   async function handleRemove(id: number) {
+    const item = cabinet.find((e) => e.id === id)
+    if (!item) return
     setCabinet((prev) => prev.filter((e) => e.id !== id))
     try {
       await authFetch(`/api/cabinet/${id}`, { method: 'DELETE' })
     } catch {
       setError('Failed to remove ingredient.')
-      authFetch('/api/cabinet')
-        .then((data: { cabinet: CabinetEntry[] }) => setCabinet(data.cabinet))
-        .catch(() => null)
+      setCabinet((prev) =>
+        prev.some((e) => e.id === id) ? prev : [...prev, item].sort((a, b) => a.id - b.id),
+      )
     }
   }
 

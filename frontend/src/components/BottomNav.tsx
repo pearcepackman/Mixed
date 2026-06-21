@@ -24,7 +24,7 @@ export default function BottomNav() {
           {({ isActive }) => (
             <>
               <div
-                className={`flex items-center justify-center w-[46px] h-[26px] rounded-[9px] transition-colors duration-150 ${
+                className={`flex items-center justify-center w-11 h-6 rounded-lg transition-colors duration-150 ${
                   isActive ? 'bg-primary/15' : 'bg-transparent'
                 }`}
               >

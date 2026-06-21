@@ -16,7 +16,7 @@ export default function EmptyState({ icon: Icon, title, description, hint, actio
         <Icon size={30} strokeWidth={1.5} />
       </div>
       <p className="text-base font-medium">{title}</p>
-      <p className="text-sm text-muted-foreground leading-relaxed max-w-[250px]">{description}</p>
+      <p className="text-sm text-muted-foreground leading-relaxed max-w-64">{description}</p>
       {hint && <p className="text-xs text-muted-foreground/60 mt-1">{hint}</p>}
       {action && <div className="mt-2">{action}</div>}
     </div>

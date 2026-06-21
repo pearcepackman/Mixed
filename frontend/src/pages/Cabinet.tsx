@@ -1,6 +1,9 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useAuth } from '@clerk/react'
-import { X } from 'lucide-react'
+import { X, FlaskConical, Loader2, Plus } from 'lucide-react'
+import { Button } from '../components/ui/button'
+import PageHeader from '../components/PageHeader'
+import EmptyState from '../components/EmptyState'
 
 function ingredientImageUrl(name: string) {
   const capitalized = name.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
@@ -15,11 +18,13 @@ function IngredientCard({ name, onRemove }: { name: string; onRemove: () => void
       <button
         onClick={onRemove}
         aria-label={`Remove ${name}`}
-        className="absolute right-1.5 top-1.5 rounded-full p-0.5 text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
+        className="absolute right-1.5 top-1.5 flex items-center justify-center w-6 h-6 rounded-full text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
       >
-        <X size={14} />
+        <X size={12} />
       </button>
-      {!imgFailed && (
+      {imgFailed ? (
+        <div className="h-14 w-14 rounded-full bg-muted" />
+      ) : (
         <img
           src={ingredientImageUrl(name)}
           alt={name}
@@ -27,8 +32,17 @@ function IngredientCard({ name, onRemove }: { name: string; onRemove: () => void
           className="h-14 w-14 object-contain"
         />
       )}
-      {imgFailed && <div className="h-14 w-14 rounded-full bg-muted" />}
-      <span className="text-center text-xs font-medium leading-tight capitalize">{name}</span>
+      <span className="text-center text-xs font-medium leading-tight capitalize line-clamp-2">{name}</span>
+    </div>
+  )
+}
+
+function GridSkeleton() {
+  return (
+    <div className="grid grid-cols-3 gap-3">
+      {Array.from({ length: 9 }).map((_, i) => (
+        <div key={i} className="h-[110px] animate-pulse rounded-xl bg-muted" />
+      ))}
     </div>
   )
 }
@@ -43,9 +57,19 @@ export default function Cabinet() {
   const { getToken } = useAuth()
   const [cabinet, setCabinet] = useState<CabinetEntry[]>([])
   const [input, setInput] = useState('')
+  const [formOpen, setFormOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [adding, setAdding] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (formOpen) {
+      // Wait for the grid transition to open before focusing
+      const t = setTimeout(() => textareaRef.current?.focus(), 300)
+      return () => clearTimeout(t)
+    }
+  }, [formOpen])
 
   const authFetch = useCallback(
     async (path: string, init?: RequestInit) => {
@@ -53,7 +77,11 @@ export default function Cabinet() {
       if (!token) throw new Error('No active session')
       const res = await fetch(`${import.meta.env.VITE_API_URL}${path}`, {
         ...init,
-        headers: { Authorization: `Bearer ${token}`, ...(init?.body ? { 'Content-Type': 'application/json' } : {}), ...init?.headers },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
+          ...init?.headers,
+        },
       })
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
@@ -71,6 +99,11 @@ export default function Cabinet() {
       .finally(() => setLoading(false))
   }, [authFetch])
 
+  function closeForm() {
+    setFormOpen(false)
+    setInput('')
+  }
+
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault()
     if (!input.trim()) return
@@ -82,7 +115,7 @@ export default function Cabinet() {
         body: JSON.stringify({ input: input.trim() }),
       })
       setCabinet(data.cabinet)
-      setInput('')
+      closeForm()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add ingredients.')
     } finally {
@@ -91,60 +124,96 @@ export default function Cabinet() {
   }
 
   async function handleRemove(id: number) {
+    setCabinet((prev) => prev.filter((e) => e.id !== id))
     try {
       await authFetch(`/api/cabinet/${id}`, { method: 'DELETE' })
-      setCabinet((prev) => prev.filter((e) => e.id !== id))
     } catch {
       setError('Failed to remove ingredient.')
+      authFetch('/api/cabinet')
+        .then((data: { cabinet: CabinetEntry[] }) => setCabinet(data.cabinet))
+        .catch(() => null)
     }
   }
 
   return (
     <div className="flex min-h-screen flex-col px-4 pt-8 pb-20">
-      <h1 className="text-2xl font-semibold mb-6">My Cabinet</h1>
+      <PageHeader title="My Cabinet" />
 
-      <form onSubmit={handleAdd} className="flex flex-col gap-3 mb-8">
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="What do you have? e.g. vodka, lime juice, triple sec, some rum…"
-          rows={3}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring resize-none"
+      {/* Toggle button */}
+      <button
+        onClick={() => (formOpen ? closeForm() : setFormOpen(true))}
+        className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-card py-3 text-sm font-medium text-muted-foreground transition-colors duration-150 hover:border-primary/50 hover:text-primary min-h-[44px]"
+      >
+        <Plus
+          size={16}
+          className={`transition-transform duration-300 ${formOpen ? 'rotate-45' : ''}`}
         />
-        <button
-          type="submit"
-          disabled={adding || !input.trim()}
-          className="self-end rounded-md bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary/80 disabled:opacity-50 min-h-[44px]"
-        >
-          {adding ? 'Adding…' : 'Add to cabinet'}
-        </button>
-      </form>
+        {formOpen ? 'Cancel' : 'Add ingredients'}
+      </button>
+
+      {/* Animated form */}
+      <div
+        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+          formOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+        }`}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <form onSubmit={handleAdd} className="flex flex-col gap-3 pb-4 pt-1">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="e.g. vodka, lime juice, triple sec, some rum…"
+              rows={3}
+              className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring resize-none placeholder:text-muted-foreground/60"
+            />
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                disabled={adding || !input.trim()}
+                className="min-h-[44px] px-5 text-sm font-medium"
+              >
+                {adding ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 size={14} className="animate-spin" />
+                    Adding…
+                  </span>
+                ) : (
+                  'Add to cabinet'
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
 
       {error && <p className="mb-4 text-sm text-destructive">{error}</p>}
 
       {loading ? (
-        <div className="flex flex-col gap-2">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-8 w-32 animate-pulse rounded-full bg-muted" />
-          ))}
-        </div>
+        <GridSkeleton />
       ) : cabinet.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 py-16 text-center">
-          <p className="text-base font-medium text-foreground">Your cabinet is empty</p>
-          <p className="text-sm text-muted-foreground">Tell us what you have and we'll show you what you can make.</p>
-        </div>
+        <EmptyState
+          icon={FlaskConical}
+          title="Your cabinet's looking thirsty"
+          description="Tell us what you've got on the shelf and we'll show you what you can pour."
+          hint="↑ tap the button above to add your first bottles"
+        />
       ) : (
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-          {cabinet.map((entry) => (
-            <IngredientCard
-              key={entry.id}
-              name={entry.name}
-              onRemove={() => handleRemove(entry.id)}
-            />
-          ))}
+        <div className="flex flex-col gap-3">
+          <p className="text-xs font-medium text-muted-foreground">
+            {cabinet.length} {cabinet.length === 1 ? 'ingredient' : 'ingredients'}
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            {cabinet.map((entry) => (
+              <IngredientCard
+                key={entry.id}
+                name={entry.name}
+                onRemove={() => handleRemove(entry.id)}
+              />
+            ))}
+          </div>
         </div>
       )}
-
     </div>
   )
 }

@@ -47,6 +47,15 @@ export default function CocktailCard({
     <div
       className="relative h-64 w-full cursor-pointer [perspective:1000px]"
       onClick={() => setFlipped((f) => !f)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          setFlipped((f) => !f)
+        }
+      }}
+      tabIndex={0}
+      role="button"
+      aria-expanded={flipped}
     >
       <div
         className={`relative h-full w-full transition-transform duration-500 [transform-style:preserve-3d] ${

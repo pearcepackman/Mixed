@@ -49,18 +49,29 @@ export default function Discover() {
   }, [authFetch])
 
   useEffect(() => {
+    let active = true
     if (searchTimeout.current) clearTimeout(searchTimeout.current)
-    if (!query.trim()) {
-      setSearchResults([])
-      return
-    }
-    setLoadingSearch(true)
+    if (!query.trim()) return
+
     searchTimeout.current = setTimeout(() => {
+      if (!active) return
+      setLoadingSearch(true)
       authFetch(`/api/cocktails/search?q=${encodeURIComponent(query.trim())}`)
-        .then((data: { cocktails: CanMakeResult[] }) => setSearchResults(data.cocktails))
-        .catch(() => setError('Search failed.'))
-        .finally(() => setLoadingSearch(false))
+        .then((data: { cocktails: CanMakeResult[] }) => {
+          if (active) setSearchResults(data.cocktails)
+        })
+        .catch(() => {
+          if (active) setError('Search failed.')
+        })
+        .finally(() => {
+          if (active) setLoadingSearch(false)
+        })
     }, 300)
+
+    return () => {
+      active = false
+      if (searchTimeout.current) clearTimeout(searchTimeout.current)
+    }
   }, [query, authFetch])
 
   const isSearching = query.trim().length > 0

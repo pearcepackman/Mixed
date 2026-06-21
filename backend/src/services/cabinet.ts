@@ -184,6 +184,14 @@ export async function getCanMake(userId: string): Promise<CanMakeResult[]> {
   const owned = new Set(ownedIds.map((r) => r.ingredientId))
 
   const cocktails = await db.cocktail.findMany({
+    where: {
+      ingredients: {
+        some: {
+          ingredientId: { in: Array.from(owned) },
+          isOptional: false,
+        },
+      },
+    },
     select: {
       id: true,
       name: true,

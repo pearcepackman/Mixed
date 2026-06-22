@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Star } from 'lucide-react'
 
 interface Props {
@@ -11,6 +11,12 @@ export default function RatingStars({ value, onChange, size = 20 }: Props) {
   const [hovered, setHovered] = useState(0)
   const [justClicked, setJustClicked] = useState(0)
   const interactive = !!onChange
+
+  useEffect(() => {
+    if (justClicked === 0) return
+    const t = setTimeout(() => setJustClicked(0), 350)
+    return () => clearTimeout(t)
+  }, [justClicked])
   const display = hovered || value
 
   if (!interactive) {
@@ -40,7 +46,6 @@ export default function RatingStars({ value, onChange, size = 20 }: Props) {
           onClick={() => {
             onChange(i)
             setJustClicked(i)
-            setTimeout(() => setJustClicked(0), 350)
           }}
           onMouseEnter={() => setHovered(i)}
           className="p-1 min-h-[44px] min-w-[44px] flex items-center justify-center"

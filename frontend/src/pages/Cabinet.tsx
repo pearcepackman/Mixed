@@ -11,15 +11,16 @@ function ingredientImageUrl(name: string) {
   return `https://www.thecocktaildb.com/images/ingredients/${encodeURIComponent(capitalized)}-Small.png`
 }
 
-function IngredientCard({ name, onRemove }: { name: string; onRemove: () => void }) {
+function IngredientCard({ name, onRemove, disabled }: { name: string; onRemove: () => void; disabled?: boolean }) {
   const [imgFailed, setImgFailed] = useState(false)
 
   return (
     <div className="relative flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-3 h-32 justify-center">
       <button
         onClick={onRemove}
+        disabled={disabled}
         aria-label={`Remove ${name}`}
-        className="absolute right-1.5 top-1.5 flex items-center justify-center w-6 h-6 rounded-full text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground"
+        className="absolute right-1.5 top-1.5 flex items-center justify-center w-6 h-6 rounded-full text-muted-foreground transition-colors duration-150 hover:bg-muted hover:text-foreground disabled:pointer-events-none"
       >
         <X size={12} />
       </button>
@@ -270,6 +271,7 @@ export default function Cabinet() {
                 <IngredientCard
                   name={entry.name}
                   onRemove={() => handleRemove(entry.id)}
+                  disabled={removingIds.has(entry.id)}
                 />
               </ScrollRevealCard>
             ))}

@@ -68,17 +68,27 @@ export default function Profile() {
   )
 
   useEffect(() => {
-    Promise.all([
+    let active = true
+    Promise.allSettled([
       authFetch('/api/logs'),
       authFetch('/api/cabinet'),
     ])
-      .then(([logsData, cabinetData]) => {
-        setLogs((logsData.logs as LogEntry[]).slice(0, 3))
-        setStats(logsData.stats)
-        setCabinet(cabinetData.cabinet as CabinetEntry[])
+      .then(([logsResult, cabinetResult]) => {
+        if (!active) return
+        if (logsResult.status === 'fulfilled') {
+          setLogs((logsResult.value.logs as LogEntry[]).slice(0, 3))
+          setStats(logsResult.value.stats)
+        }
+        if (cabinetResult.status === 'fulfilled') {
+          setCabinet(cabinetResult.value.cabinet as CabinetEntry[])
+        }
       })
-      .catch(() => {})
-      .finally(() => setLoading(false))
+      .finally(() => {
+        if (active) setLoading(false)
+      })
+    return () => {
+      active = false
+    }
   }, [authFetch])
 
   const animatedDrinks = useCountUp(stats?.total ?? 0)

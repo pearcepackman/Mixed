@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { type ReactNode, useState, useEffect, useCallback, useRef } from 'react'
 import { useAuth } from '@clerk/react'
 import { X, FlaskConical, Loader2, Plus } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import PageHeader from '../components/PageHeader'
 import EmptyState from '../components/EmptyState'
+import StickyHeader from '../components/StickyHeader'
 
 function ingredientImageUrl(name: string) {
   const capitalized = name.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
@@ -14,7 +15,7 @@ function IngredientCard({ name, onRemove }: { name: string; onRemove: () => void
   const [imgFailed, setImgFailed] = useState(false)
 
   return (
-    <div className="relative flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-3">
+    <div className="relative flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-3 h-32 justify-center">
       <button
         onClick={onRemove}
         aria-label={`Remove ${name}`}
@@ -23,16 +24,16 @@ function IngredientCard({ name, onRemove }: { name: string; onRemove: () => void
         <X size={12} />
       </button>
       {imgFailed ? (
-        <div className="h-14 w-14 rounded-full bg-muted" />
+        <div className="h-14 w-14 rounded-full bg-muted flex-shrink-0" />
       ) : (
         <img
           src={ingredientImageUrl(name)}
           alt={name}
           onError={() => setImgFailed(true)}
-          className="h-14 w-14 object-contain"
+          className="h-14 w-14 object-contain flex-shrink-0"
         />
       )}
-      <span className="text-center text-xs font-medium leading-tight capitalize line-clamp-2">{name}</span>
+      <span className="text-center text-xs font-medium leading-tight capitalize line-clamp-2 w-full px-1">{name}</span>
     </div>
   )
 }
@@ -41,8 +42,53 @@ function GridSkeleton() {
   return (
     <div className="grid grid-cols-3 gap-3">
       {Array.from({ length: 9 }).map((_, i) => (
-        <div key={i} className="h-28 animate-pulse rounded-xl bg-muted" />
+        <div key={i} className="h-32 animate-pulse rounded-xl bg-muted" />
       ))}
+    </div>
+  )
+}
+
+function ScrollRevealCard({
+  children,
+  colIndex,
+  isRemoving,
+}: {
+  children: ReactNode
+  colIndex: number
+  isRemoving: boolean
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.unobserve(el)
+        }
+      },
+      { threshold: 0.05 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-300 ease-out ${
+        isRemoving
+          ? 'opacity-0 scale-95'
+          : visible
+          ? 'opacity-100 translate-y-0 scale-100'
+          : 'opacity-0 translate-y-4 scale-[0.96]'
+      }`}
+      style={{ transitionDelay: isRemoving ? '0ms' : `${colIndex * 75}ms` }}
+    >
+      {children}
     </div>
   )
 }
@@ -61,15 +107,16 @@ export default function Cabinet() {
   const [loading, setLoading] = useState(true)
   const [adding, setAdding] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [removingIds, setRemovingIds] = useState(new Set<number>())
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     if (formOpen) {
-      // Wait for the grid transition to open before focusing
       const t = setTimeout(() => textareaRef.current?.focus(), 300)
       return () => clearTimeout(t)
     }
   }, [formOpen])
+
 
   const authFetch = useCallback(
     async (path: string, init?: RequestInit) => {
@@ -126,7 +173,10 @@ export default function Cabinet() {
   async function handleRemove(id: number) {
     const item = cabinet.find((e) => e.id === id)
     if (!item) return
+    setRemovingIds((prev) => new Set([...prev, id]))
+    await new Promise((r) => setTimeout(r, 280))
     setCabinet((prev) => prev.filter((e) => e.id !== id))
+    setRemovingIds((prev) => { const s = new Set(prev); s.delete(id); return s })
     try {
       await authFetch(`/api/cabinet/${id}`, { method: 'DELETE' })
     } catch {
@@ -138,7 +188,12 @@ export default function Cabinet() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col px-4 pt-8 pb-20">
+    <>
+      <StickyHeader
+        title="My Cabinet"
+        right={cabinet.length > 0 ? `${cabinet.length} ${cabinet.length === 1 ? 'ingredient' : 'ingredients'}` : undefined}
+      />
+    <div className="flex min-h-screen flex-col px-4 pt-8 pb-20 animate-page-enter">
       <PageHeader title="My Cabinet" />
 
       {/* Toggle button */}
@@ -206,16 +261,22 @@ export default function Cabinet() {
             {cabinet.length} {cabinet.length === 1 ? 'ingredient' : 'ingredients'}
           </p>
           <div className="grid grid-cols-3 gap-3">
-            {cabinet.map((entry) => (
-              <IngredientCard
+            {cabinet.map((entry, idx) => (
+              <ScrollRevealCard
                 key={entry.id}
-                name={entry.name}
-                onRemove={() => handleRemove(entry.id)}
-              />
+                colIndex={idx % 3}
+                isRemoving={removingIds.has(entry.id)}
+              >
+                <IngredientCard
+                  name={entry.name}
+                  onRemove={() => handleRemove(entry.id)}
+                />
+              </ScrollRevealCard>
             ))}
           </div>
         </div>
       )}
     </div>
+    </>
   )
 }

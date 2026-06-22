@@ -3,6 +3,8 @@ import { useAuth } from '@clerk/react'
 import { useNavigate } from 'react-router'
 import { Search, X } from 'lucide-react'
 import CocktailCard from '../components/CocktailCard'
+import StickyHeader from '../components/StickyHeader'
+import ScrollReveal from '../components/ScrollReveal'
 
 interface CanMakeResult {
   cocktailId: number
@@ -94,27 +96,30 @@ export default function Discover() {
     return (
       <div className="flex flex-col gap-4">
         {list.map((c) => (
-          <CocktailCard
-            key={c.cocktailId}
-            cocktailId={c.cocktailId}
-            name={c.name}
-            imageUrl={c.imageUrl}
-            category={c.category}
-            glass={c.glass}
-            alcoholic={c.alcoholic}
-            instructions={c.instructions}
-            ingredients={c.ingredients}
-            ownedIngredients={c.ownedIngredients}
-            totalIngredients={c.totalIngredients}
-            onLog={handleLog}
-          />
+          <ScrollReveal key={c.cocktailId}>
+            <CocktailCard
+              cocktailId={c.cocktailId}
+              name={c.name}
+              imageUrl={c.imageUrl}
+              category={c.category}
+              glass={c.glass}
+              alcoholic={c.alcoholic}
+              instructions={c.instructions}
+              ingredients={c.ingredients}
+              ownedIngredients={c.ownedIngredients}
+              totalIngredients={c.totalIngredients}
+              onLog={handleLog}
+            />
+          </ScrollReveal>
         ))}
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-screen flex-col px-4 pt-8 pb-20">
+    <>
+    <StickyHeader title="Discover" />
+    <div className="flex min-h-screen flex-col px-4 pt-8 pb-20 animate-page-enter">
       <h1 className="text-2xl font-semibold mb-4">Discover</h1>
 
       {/* Search bar */}
@@ -185,5 +190,6 @@ export default function Discover() {
         renderCards(displayed)
       )}
     </div>
+    </>
   )
 }

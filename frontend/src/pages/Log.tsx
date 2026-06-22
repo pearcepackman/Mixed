@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useCountUp } from '../hooks/useCountUp'
+import StickyHeader from '../components/StickyHeader'
 import { useAuth } from '@clerk/react'
 import { useLocation, useNavigate } from 'react-router'
 import { Search, X, ArrowLeft, Trash2, Loader2, BookOpen } from 'lucide-react'
@@ -199,10 +201,14 @@ export default function Log() {
     }
   }
 
+  const animatedDrinkCount = useCountUp(stats.total)
+
   // ── History view ──────────────────────────────────────────────────────────
   if (step === 'history') {
     return (
-      <div className="flex min-h-screen flex-col px-4 pt-8 pb-20">
+      <>
+      <StickyHeader title="My Drinks" />
+      <div className="flex min-h-screen flex-col px-4 pt-8 pb-20 animate-page-enter">
         <PageHeader
           title="My Drinks"
           action={
@@ -218,7 +224,7 @@ export default function Log() {
         {!loadingHistory && stats.total > 0 && (
           <div className="grid grid-cols-3 gap-3 mb-6">
             {[
-              { label: 'Drinks', value: stats.total.toString() },
+              { label: 'Drinks', value: animatedDrinkCount.toString() },
               { label: 'Avg rating', value: stats.averageRating != null ? stats.averageRating.toFixed(1) : '—' },
               { label: 'Top style', value: stats.topCategory ?? '—' },
             ].map(({ label, value }) => (
@@ -275,13 +281,16 @@ export default function Log() {
           </div>
         )}
       </div>
+      </>
     )
   }
 
   // ── Search view ───────────────────────────────────────────────────────────
   if (step === 'search') {
     return (
-      <div className="flex min-h-screen flex-col px-4 pt-8 pb-20">
+      <>
+      <StickyHeader title="Log a drink" />
+      <div className="flex min-h-screen flex-col px-4 pt-8 pb-20 animate-page-enter">
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={backToHistory}
@@ -325,7 +334,7 @@ export default function Log() {
               <button
                 key={c.cocktailId}
                 onClick={() => selectCocktail(c)}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 text-left transition-colors duration-150 hover:bg-muted min-h-[60px]"
+                className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 text-left transition-all duration-150 hover:bg-muted active:scale-95 active:bg-muted min-h-[60px]"
               >
                 {c.imageUrl ? (
                   <img src={c.imageUrl} alt={c.name} className="h-10 w-10 rounded-lg object-cover flex-shrink-0" />
@@ -346,12 +355,15 @@ export default function Log() {
           <p className="text-sm text-muted-foreground text-center py-8">Start typing to search.</p>
         )}
       </div>
+      </>
     )
   }
 
   // ── Rate view ─────────────────────────────────────────────────────────────
   return (
-    <div className="flex min-h-screen flex-col px-4 pt-8 pb-20">
+    <>
+    <StickyHeader title={selectedCocktail?.name ?? 'Rate drink'} />
+    <div className="flex min-h-screen flex-col px-4 pt-8 pb-20 animate-page-enter">
       <div className="flex items-center gap-3 mb-6">
         <button
           onClick={() => setStep('search')}
@@ -412,5 +424,6 @@ export default function Log() {
         </button>
       </div>
     </div>
+    </>
   )
 }

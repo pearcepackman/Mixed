@@ -48,7 +48,7 @@ export default function CocktailCard({
 
   return (
     <div
-      className="relative h-64 w-full cursor-pointer [perspective:1000px]"
+      className="relative h-64 w-full cursor-pointer [perspective:1000px] transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-lg"
       onClick={() => setFlipped((f) => !f)}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {

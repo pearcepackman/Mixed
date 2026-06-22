@@ -24,11 +24,14 @@ export default function BottomNav() {
           {({ isActive }) => (
             <>
               <div
-                className={`flex items-center justify-center w-11 h-6 rounded-lg transition-colors duration-150 ${
+                className={`flex items-center justify-center w-11 h-6 rounded-lg transition-colors duration-200 ${
                   isActive ? 'bg-primary/15' : 'bg-transparent'
                 }`}
               >
-                <Icon size={20} />
+                <Icon
+                  size={20}
+                  className={`transition-transform duration-200 ${isActive ? 'scale-110' : 'scale-100'}`}
+                />
               </div>
               <span className="text-[10px] font-medium">{label}</span>
             </>
